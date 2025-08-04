@@ -1,0 +1,41 @@
+FROM python:3.11-slim
+
+# Install system dependencies for Pi Camera
+RUN apt-get update && apt-get install -y \
+    python3-picamera2 \
+    python3-libcamera \
+    python3-kms++ \
+    python3-pyqt5 \
+    python3-prctl \
+    libatlas-base-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app directory
+WORKDIR /app
+
+# Copy camera server script
+COPY camera_server.py /app/
+
+# Create non-root user for security
+RUN useradd -r -s /bin/false picam
+
+# Set environment variables with defaults
+ENV CAM_USER=admin
+ENV CAM_PASS=pogocam2025
+ENV CAM_PORT=8080
+
+# Expose port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f --basic --user ${CAM_USER}:${CAM_PASS} http://localhost:${CAM_PORT}/ || exit 1
+
+# Install curl for health check
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Run as non-root user
+USER picam
+
+# Start the camera server
+CMD ["python3", "camera_server.py"]
