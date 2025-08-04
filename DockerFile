@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     python3-pyqt5 \
     python3-prctl \
     libatlas-base-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Create app directory
@@ -19,20 +20,12 @@ COPY camera_server.py /app/
 # Create non-root user for security
 RUN useradd -r -s /bin/false picam
 
-# Set environment variables with defaults
-ENV CAM_USER=admin
-ENV CAM_PASS=pogocam2025
-ENV CAM_PORT=8080
-
 # Expose port
 EXPOSE 8080
 
-# Health check
+# Health check - Use environment variable for port
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f --basic --user ${CAM_USER}:${CAM_PASS} http://localhost:${CAM_PORT}/ || exit 1
-
-# Install curl for health check
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+    CMD curl -f --basic --user ${CAM_USER}:${CAM_PASS} http://localhost:${CAM_PORT:-8080}/ || exit 1
 
 # Run as non-root user
 USER picam

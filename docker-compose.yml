@@ -6,22 +6,18 @@ services:
     container_name: picamera-live
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "${CAM_PORT}:8080"
     devices:
       - /dev/video0:/dev/video0
       - /dev/vchiq:/dev/vchiq
       - /dev/vcsm-cma:/dev/vcsm-cma
-    privileged: true  # Required for camera access
+    privileged: true
     environment:
-      - CAM_USER=${CAM_USER:-admin}
-      - CAM_PASS=${CAM_PASS:-changeme123}
-      - CAM_PORT=${CAM_PORT:-8080}
+      - CAM_USER=${CAM_USER}
+      - CAM_PASS=${CAM_PASS}
+      - CAM_PORT=8080
     volumes:
-      - /opt/vc/lib:/opt/vc/lib:ro  # Pi GPU libraries
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.picamera.rule=Host(`camera.yourdomain.com`)"
-      - "traefik.http.routers.picamera.tls=true"
+      - /opt/vc/lib:/opt/vc/lib:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "--basic", "--user", "${CAM_USER}:${CAM_PASS}", "http://localhost:8080/"]
       interval: 30s

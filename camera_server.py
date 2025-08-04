@@ -17,11 +17,20 @@ from picamera2.encoders import JpegEncoder
 from picamera2.outputs import FileOutput
 from libcamera import Transform
 import os
+import sys
 
-# Configuration
-USERNAME = os.getenv('CAM_USER', 'admin')
-PASSWORD = os.getenv('CAM_PASS', 'pogocam2025')
+# Configuration - REQUIRED environment variables
+USERNAME = os.getenv('CAM_USER')
+PASSWORD = os.getenv('CAM_PASS')
 PORT = int(os.getenv('CAM_PORT', '8080'))
+
+# Validate required environment variables
+if not USERNAME or not PASSWORD:
+    print("❌ Error: CAM_USER and CAM_PASS environment variables are required!")
+    print("💡 Create a .env file with your credentials:")
+    print("   CAM_USER=your_username")
+    print("   CAM_PASS=your_secure_password")
+    sys.exit(1)
 
 class StreamingOutput(io.BufferedIOBase):
     def __init__(self):
