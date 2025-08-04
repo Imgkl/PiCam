@@ -1,4 +1,3 @@
-cat > setup.sh << 'EOF'
 #!/bin/bash
 set -e
 
@@ -119,4 +118,3 @@ echo "   • 🎥 Smooth MJPEG streaming"
 echo "   • 🔧 180° rotation support"
 echo ""
 echo "🌐 Open http://${SERVER_IP}:${port} in your browser!"
-EOF
