@@ -44,7 +44,7 @@ EOF
 cat > start.sh << 'SCRIPT_EOF'
 #!/bin/bash
 echo "🚀 Starting Pi Camera Stream Server..."
-docker compose up -d
+sudo docker compose up -d
 echo "✅ Server started!"
 echo "🌐 Access your camera at: http://$(hostname -I | awk '{print $1}'):$(grep CAM_PORT .env | cut -d'=' -f2)"
 SCRIPT_EOF
@@ -52,22 +52,22 @@ SCRIPT_EOF
 cat > stop.sh << 'SCRIPT_EOF'
 #!/bin/bash
 echo "🛑 Stopping Pi Camera Stream Server..."
-docker compose down
+sudo docker compose down
 echo "✅ Server stopped!"
 SCRIPT_EOF
 
 cat > logs.sh << 'SCRIPT_EOF'
 #!/bin/bash
 echo "📋 Camera Server Logs:"
-docker compose logs -f picamera-stream
+sudo docker compose logs -f picamera-stream
 SCRIPT_EOF
 
 cat > update.sh << 'SCRIPT_EOF'
 #!/bin/bash
 echo "🔄 Updating Pi Camera Server..."
-docker compose down
-docker compose build --no-cache
-docker compose up -d
+sudo docker compose down
+sudo docker compose build --no-cache
+sudo docker compose up -d
 echo "✅ Update complete!"
 SCRIPT_EOF
 
@@ -77,11 +77,11 @@ chmod +x start.sh stop.sh logs.sh update.sh
 # Build and start the container
 echo ""
 echo "🔨 Building Docker container..."
-docker compose build
+sudo docker compose build
 
 echo ""
 echo "🚀 Starting camera server..."
-docker compose up -d
+sudo docker compose up -d
 
 # Wait for server to be ready
 echo "⏳ Waiting for server to start..."
