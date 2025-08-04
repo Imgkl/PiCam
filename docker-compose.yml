@@ -12,10 +12,16 @@ services:
     privileged: true
     environment:
       - CAM_USER=${CAM_USER}
-      - CAM_PASS=${CAM_PASS}
+      - CAM_PASS=${CAM_PASS}  
       - CAM_PORT=8080
     volumes:
       - /opt/vc/lib:/opt/vc/lib:ro
+      - /usr/lib/python3/dist-packages/picamera2:/usr/local/lib/python3.11/site-packages/picamera2:ro
+      - /usr/lib/python3/dist-packages/libcamera:/usr/local/lib/python3.11/site-packages/libcamera:ro
+      - /usr/lib/python3/dist-packages/_libcamera.cpython-311-aarch64-linux-gnu.so:/usr/local/lib/python3.11/site-packages/_libcamera.cpython-311-aarch64-linux-gnu.so:ro
+      - /usr/lib/aarch64-linux-gnu/libcamera.so.0.5.1:/usr/lib/aarch64-linux-gnu/libcamera.so.0.5.1:ro
+      - /usr/lib/aarch64-linux-gnu/libcamera-base.so.0.5.1:/usr/lib/aarch64-linux-gnu/libcamera-base.so.0.5.1:ro
+      - /usr/lib/aarch64-linux-gnu/libcamera:/usr/lib/aarch64-linux-gnu/libcamera:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "--basic", "--user", "${CAM_USER}:${CAM_PASS}", "http://localhost:8080/"]
       interval: 30s

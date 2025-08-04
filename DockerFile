@@ -1,14 +1,14 @@
 FROM python:3.11-slim
 
-# Install system dependencies for Pi Camera
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    python3-picamera2 \
-    python3-libcamera \
-    python3-kms++ \
-    python3-pyqt5 \
-    python3-prctl \
-    libatlas-base-dev \
     curl \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create app directory
@@ -17,18 +17,8 @@ WORKDIR /app
 # Copy camera server script
 COPY camera_server.py /app/
 
-# Create non-root user for security
-RUN useradd -r -s /bin/false picam
-
 # Expose port
 EXPOSE 8080
-
-# Health check - Use environment variable for port
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f --basic --user ${CAM_USER}:${CAM_PASS} http://localhost:${CAM_PORT:-8080}/ || exit 1
-
-# Run as non-root user
-USER picam
 
 # Start the camera server
 CMD ["python3", "camera_server.py"]
